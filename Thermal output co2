@@ -1,0 +1,39 @@
+A = 9 #(area, [km^2])
+h = 800 #(Thickness of reservoir, [m])
+v = 6 #(Volume, [km^3])
+Tr = 175 #(Temperature of reservoir, [km^3])
+Ta = 70 #(Temperature of abandonment, [°C])
+Phi = 0.2 #(Porosity in percent %)
+Cr = 0.91 #(Rock specific heat, [kJ/kj*°C])
+C_Co2 = 1.3 #(Co2 specific heat, [kJ/kj*°C])
+rho_r = 2250 #(Rock density, [kg/m^3])
+rho_Co2 = 467 #(Co2 density, [kg/m^3])
+S_Co2 = 0.95 #(Co2 saturation, [%])
+Rf = 0.175 #(Recovery factor in percent, [%])
+Ce = 0.175 #(Coversion efficency in percent, [%])
+Pf = 0.95 #(Power factor in percent, [%])
+t = 25 #(Lifespan in years)
+
+def total_thermal_energy(A, h, rho_r, Cr, rho_Co2, C_Co2, S_Co2, Phi, Tr, Ta):
+    """
+    Total heat in kiljo joules Q_T (kJ).
+    """
+    Q_r = A * h * rho_r * Cr * (1-Phi) * (Tr-Ta)
+    Q_w = A * h * rho_Co2 * C_Co2 * Phi * S_Co2 * (Tr-Ta)
+    Q_T = Q_r + Q_w
+    return Q_T
+
+Q_T = total_thermal_energy(A, h, rho_r, Cr, rho_Co2, C_Co2, S_Co2, Phi, Tr, Ta)
+
+def power_plant_size(A, h, Tr, Ta, rho_r, Cr, Phi, rho_Co2, C_Co2, S_Co2, Rf, Ce, Pf, t):
+    """
+    converting total thermal energy into electrical power P [We]
+    """
+    P = (A* h * (Tr-Ta) * (rho_r * Cr * (1-Phi) + rho_Co2 * C_Co2 * S_Co2 * Phi)) * ( Rf * Ce) / (Pf * t)
+   
+    return P
+
+P = power_plant_size(A, h, Tr, Ta, rho_r, Cr, Phi, rho_Co2, C_Co2, S_Co2, Rf, Ce, Pf, t)
+
+print(f' The termal energy available in the reservoir with Co2 is {Q_T} kJ')
+print(f'The size of the reservoir with Co2 is {P} We')
