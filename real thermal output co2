@@ -1,0 +1,46 @@
+A = 9          # km^2
+h = 800        # m
+Tr = 175       # °C
+Ta = 70        # °C
+Phi = 0.2      # Porosity
+Cr = 0.91      # Rock specific heat (kJ/kg·°C)
+C_Co2 = 1.53   # CO2 specific heat (kJ/kg·°C)
+rho_r = 2250   # Rock density (kg/m^3)
+rho_Co2 = 327  # Density co2(kg/m^3)
+S_Co2 = 0.95   # saturation co2
+Rf = 0.175     # Recovery factor
+Ce = 0.175     # Conversion efficiency
+Pf = 0.95      # Power factor
+t = 25         # Lifespan in years
+
+def total_thermal_energy(A, h, rho_r, Cr, rho_Co2, C_Co2, S_Co2, Phi, Tr, Ta):
+    """
+    Total heat in kilojoules, Q_T (kJ).
+    """
+    Q_r = A * h * rho_r * Cr * (1 - Phi) * (Tr - Ta)
+    Q_w = A * h * rho_Co2 * C_Co2 * Phi * S_Co2 * (Tr - Ta)
+    Q_T = Q_r + Q_w
+    return Q_T
+
+def thermal_power_size(A, h, Tr, Ta, rho_r, Cr, Phi,
+                       rho_Co2, C_Co2, S_Co2,
+                       Rf, Pf, t):
+    """
+    thermal power output? (Wt) from the reservoir, by
+    excluding conversion efficiency (Ce).
+    """
+    
+    Wt = (A * h * (Tr - Ta) *
+          (rho_r * Cr * (1 - Phi) + rho_Co2 * C_Co2 * S_Co2 * Phi)
+         ) * (Rf) / (Pf * t)
+    return Wt
+
+Q_T = total_thermal_energy(A, h, rho_r, Cr,
+                           rho_Co2, C_Co2, S_Co2, Phi, Tr, Ta)
+
+W_th = thermal_power_size(A, h, Tr, Ta, rho_r, Cr, Phi,
+                          rho_Co2, C_Co2, S_Co2,
+                          Rf, Pf, t)
+
+print(f"Total thermal energy in the reservoir (Q_T): {Q_T} kJ")
+print(f"Average thermal power from the reservoir (W_t): {W_th} Wt")
